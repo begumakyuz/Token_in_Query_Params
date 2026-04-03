@@ -61,22 +61,59 @@ Uygulamada devreye soktuğumuz Header tabanlı çözüm (`app.py - secure_downlo
 
 ---
 
-## 🏃 Testler ve Çalıştırma Yönergeleri
-Projede her bir dosya ve izolasyon senaryosu çalışmaya hazırdır:
+## 🚀 Kurulum ve Çalıştırma Rehberi (Getting Started)
 
-1. Adım: Çevre değişkeni örneğini `.env` olarak değiştirip şifre belirleyin.
-   ```bash
-   cp .env.example .env
-   ```
+Projeyi başka bir cihazda sorunsuzca ayağa kaldırmak için aşağıdaki adımları sırasıyla izleyin. Sistem çift katmanlı konteyner (Docker) mimarisine sahip olduğu için yerel makinenize herhangi bir sunucu paketi kurmanıza gerek yoktur. Sadece Docker kurulu olması yeterlidir.
 
-2. Adım: Tüm Container izolasyonlarını ayağa kaldırın:
-   ```bash
-   docker-compose up -d --build
-   ```
-
-**✅ Yazılan Kodlara Yönelik Unit Testler (Otomatik Doğrulama):**
-`tests/test_app.py` üzerine yazılmış PyTest altyapısı mevcuttur. Pipeline benzeri güvenlik doğrulamasını kendi bilgisayarınızda tetiklemek için:
+### 1️⃣ Projeyi İndirin (Clone)
+Projeyi cihazınıza kopyalamak ve ana dizine girmek için terminalinizde şu komutları çalıştırın:
 ```bash
+git clone https://github.com/begumakyuz/Token_in_Query_Params.git
+cd Token_in_Query_Params
+```
+
+### 2️⃣ Çevre Değişkenlerini (Environment Variables) Tanımlayın
+Uygulamanın şifreleri güvensiz biçimde "Hardcoded" koda gömülmediği için anahtarlarını `.env` dosyası üzerinden okur. Örnek dosyayı kopyalayarak yapıyı aktif hale getirin:
+```bash
+# Windows (CMD/PowerShell) için:
+copy .env.example .env
+
+# macOS / Linux (Terminal) için:
+cp .env.example .env
+```
+*(Dilerseniz `.env` dosyasını editörünüzle açarak test edebilmek için `API_SECRET_KEY` değerini değiştirebilirsiniz).*
+
+### 3️⃣ Docker ile Sistemi Başlatın
+Python (Flask) Backend ve Nginx Proxy katmanlarını tek tuşla, Rootless formatında ayağa bağlamak için sistemi derleyin:
+```bash
+# İmajların derlenmesi ve arkada planda (detached) başlatılması
+docker-compose up -d --build
+
+# Sunucuların sorunsuz çalıştığından emin olmak (Log izlemek) için:
+docker-compose logs -f
+```
+
+### 4️⃣ Zafiyetli ve Güvenli Uç Noktaları Test Edin (API Curl)
+Sunucularımız testleri yapmak için `localhost:80` (Nginx) portunda dinlemektedir:
+
+**A) Zafiyetli Uygulamanın Testi (URL Üzerinden):**
+```bash
+curl "http://localhost/vulnerable/download?token=secure_api_key_placeholder"
+```
+*(Çıktıda Başarılı cevabı alırsınız. Ancak Docker loglarına bakıldığında adli bilişim kanıtlarını yok etmeyen ama maskeleyen `<Log Scrubbing>` Regex'i çalıştığı için Nginx access loglarında şifrenizi "***" şeklinde görürsünüz).*
+
+**B) Güvenli Mimarinin Testi (Header Üzerinden):**
+Zafiyetli URL engellenmiş, trafik güvenli Header yapısına bağlanmıştır:
+```bash
+curl -H "Authorization: Bearer secure_api_key_placeholder" http://localhost/secure/download
+```
+
+### 5️⃣ Otomatik Güvenlik Testlerini (Unit Test / PyTest) Çalıştırın
+CI/CD pipeline'ında çalışan siber güvenlik senaryolarını kendi makinenizde manuel çalıştırmak isterseniz (Makinenizde Python olmalıdır):
+```bash
+# Python kütüphanelerinin (Flask, PyTest vb.) kurulması
 pip install -r requirements.txt
+
+# Yazılan güvenlik doğrulama testlerinin tetiklenmesi
 pytest tests/
 ```
