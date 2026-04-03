@@ -4,9 +4,8 @@ services:
   backend:
     build: 
       context: ./app
-    environment:
-      # Şifre çevre değişkeni ile güvenli aktarılır
-      - API_SECRET_KEY=secure_api_key_placeholder
+    env_file:
+      - .env
     ports:
       - "3000:3000"
     restart: unless-stopped

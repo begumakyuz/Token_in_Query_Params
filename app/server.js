@@ -55,4 +55,8 @@ app.get('/secure/download', (req, res) => {
     }
 });
 
-app.listen(PORT, () => console.log(`Backend Servisi ${PORT} portunda dinliyor...`));
+if (require.main === module) {
+    app.listen(PORT, () => console.log(`Backend Servisi ${PORT} portunda dinliyor...`));
+}
+
+module.exports = app;

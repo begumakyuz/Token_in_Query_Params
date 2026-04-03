@@ -96,8 +96,22 @@ app.get('/secure/download', (req, res) => {
 ---
 
 ## 🏃 Sistemi Test Etme Yönergeleri
-Kurulumun 5 aşamalı çözüm setini yerel makinenizde test etmek için şu komutu verin:
+Sistemi ayağa kaldırmadan önce `.env` dosyasını yapılandırmanız gerekir:
+```bash
+cp .env.example .env
+```
+
+Ardından 5 aşamalı çözüm setini yerel makinenizde test etmek için şu komutu verin:
 ```bash
 docker-compose up -d --build
 ```
 Log maskelemeyi test etmek için `/vulnerable` adrese URL üzerinden; `secure` adrese ise Header parametresi ile Curl isteği atabilirsiniz. Arka planda Rust Audit Aracı testlerinizin analizi için `tools/log_auditor` içerisindedir.
+
+### 🧪 Otomatik Güvenlik Testlerini Çalıştırma (Jest & Supertest)
+Uygulama kodlarına özel yazılan güvenlik birim testlerini tetiklemek için:
+```bash
+cd app
+npm install
+npm test
+```
+*(Bu test senaryoları `app/tests/security.test.js` dosyasında bulunur)*
