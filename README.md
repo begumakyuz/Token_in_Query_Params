@@ -1,79 +1,81 @@
 # 🛡️ L14 - Token in Query Params (Python/Flask) Analiz ve Çözüm Projesi
 
-Bu proje, "Token in Query Params" (Yetkilendirme verisinin URL parametreleriyle iletilmesi) zafiyetinin **Flask tabanlı (app.py)** bir Python uygulamasında nasıl analiz edileceğini ve yapılandırmalardan temizleneceğini gösteren profesyonel bir Konsept Kanıtıdır.
+Bu proje, "Token in Query Params" (Yetkilendirme verisinin URL parametreleriyle iletilmesi) zafiyetinin **Flask tabanlı (app.py)** bir Python uygulamasında nasıl tespit edileceğini ve kurumsal standartlarda nasıl temizleneceğini gösteren profesyonel bir Siber Güvenlik Laboratuvarıdır.
 
-Aşağıdaki 5 Adım, projenin güvenlik kriterlerine birebir eşleşmektedir:
+> 🎓 **Projenin Akademik Çerçevesi (Reasoning):** Siber saldırılar genellikle tek bir zafiyetten değil, zincirleme yapılandırma hatalarından doğar. Bu sistemde sadece zafiyet yamalanmamış, aynı zamanda "Defense in Depth" (Derinlemesine Savunma) felsefesi benimsenerek Nginx Ağ, Adli Bilişim Günlükleri, CI/CD Pipeline kontrolleri ve Rootless Docker katmanlarında sıkılaştırma yapılmıştır.
+
+Aşağıdaki **5 Adım**, projenin güvenlik kriterlerine birebir cevap verecek şekilde akıl yürütme (Reasoning) ile genişletilmiştir:
+
+---
 
 ## 🛠️ Adım 1: Kurulum & Kod Analizi (Reverse)
-Projeye dahil olan uygulamanın statik dosyaları (özellikle `app.py`) incelendiğinde zafiyetin kalbi ortaya çıkar.
-Kötü niyetli kullanımda `request.args.get('token')` metodu, gizli anahtarı doğrudan URL'nin bir parçası olarak arar.
+Projeye dahil olan uygulamanın statik kodları incelendiğinde (`app.py`), "Authentication / Authorization" zincirinin en zayıf halkası ortaya çıkar.
 
-**Misconfiguration Analizi:**
-- `app.py` içerisindeki `/vulnerable/download` uç noktası tasarımı, yetki objesini (Token) URL parametrelerine gömmüştür.
-- Bu veriler URL'de olduğu için Proxy, ISP ve ara ağ izleyicileri tarafından açık şekilde görülür. 
-- Gerçek dünyada hassas yapılandırma verileri (`SECURE_TOKEN`, `API_KEY`) hiçbir zaman kodun içine hardcode edilmez. Bu projedeki `.env` dosyamız sayesinde, Docker'daki Environment Variables olarak geçilip bellekte güvenle tutulur. Çözüm olan `/secure/download` dizininde URL parametreleri reddedilir.
+* **Zafiyetli Tasarım:** `request.args.get('token')` metodu, gizli anahtarı URL (GET parametresi) olarak kabul eder. (`/vulnerable/download?token=XYZ`)
+* 🧠 **Reasoning (Neden Bu Bir Yanlış Yapılandırmadır?):**
+  Geliştiriciler sıklıkla kullanım kolaylığı (link paylaşımı vs.) için tokenları URL'ye gömerler. Ancak URI verileri, HTTP(S) protokol standartlarına göre "Request Body"si gibi Payload içerisinde gitmez, HTTP başlığının (Request-Line) direkt parçasıdır. SSL/TLS şifrelemesi sunucuya ulaşana kadar trafiği korusa bile, paketin ulaştığı Gateway Proxy, Web Server, ISP router veya VPN cihazları bu URL'leri kalıcı (persistent) log olarak düz metin (plaintext) biçimde yazar.
+* **Kurulum ve Çözüm:** `.env` ile dışsallaştırılan token değişkeni, bellek içinde (Environment Variable) tutulur ve güvenli olan `/secure/download` dizininde sadece HTTP Başlıklarından (Header) denetlenir.
+
+---
 
 ## 🔎 Adım 2: Adli Bilişim (Forensics & Log Analysis)
-URL parametrelerindeki tokenin "gerçek" bir ortama sızdığını ispatlamak Forensics açısından en iyi göstergedir.
+URL parametrelerinde gezinen token sızıntısının ispatlanması Forensics (Adli Bilişim) perspektifinden oldukça basittir. 
 
-Saldırgan, Nginx konteynerindeki `access.log` dosyasına düştüğünde URL zafiyetini (sızıntısını) saniye saniye görür:
+Saldırgan (veya yetkisiz bir IT çalışanı), Nginx konteynerindeki `access.log` dosyasına eriştiginde olay anını şu şekilde gözlemler:
 ```text
 192.168.1.105 - - [03/Apr/2026:10:45:12 +0000] "GET /vulnerable/download?token=secure_api_key_placeholder HTTP/1.1" 200 4096 "-" "Mozilla/5.0"
 ```
 
-**Sızıntıyı Temizleme: Log Scrubbing & Log Rotate İspatı:**
-Sistemi log sızıntılarından kurtarmak hayati önem taşır.
-1. **Log Scrubbing**: Nginx'e yazdığımız Regex tabanlı `map` kuralıyla (`nginx.conf`) bu alan artık loglara `?token=***` formatında, tamamen maskelenmiş şekilde düşer.
-2. **Log Rotate**: Ancak geçmişte kalan sızıntılı logları sonsuza dek tutamayız. İşte bu yüzden projede yer alan `nginx/logrotate.conf` ayarı devreye girer. Disk doluluğunu azaltıp logları compress (sıkıştırarak) saklar ve 14 ünün ardından otomatik yok eder.
+* 🧠 **Reasoning (Log Maskeleme ve Rotasyon Mantığı):** 
+  Sızan log satırlarını tamamen "silmek" Audit (Denetlenebilirlik) ilkelerine aykırıdır. Bunun yerine Nginx üzerindeki `map` direktifi kullanılarak URL'deki Regex alanlarıyla eşleşen kısımlar gizlenir (Log Scrubbing). Böylece olay: `?token=***` formatında iz bırakır fakat veri ifşa olmaz. 
+  Ayrıca sızan verilerin gün geçtikçe sunucu depolama alanını doldurup DoS (Denial of Service) zafiyetine yol açmaması adına `nginx/logrotate.conf` ayarı yapılmış ve bu sızıntı dosyalarının 14 ardışık günün sonunda diskten yok edilmesi kurgulanmıştır.
+
+---
 
 ## ⚙️ Adım 3: İş Akışları (CI/CD & Secret Management)
-DevSecOps prensiplerinde, geliştiricilerin zafiyetli kod (`request.args.get('token')`) yazmasını üretim aşamasında durdurmak gerekir.
+Güvenlik ihlallerinin Üretim (Production) ortamına sızmadan durdurulması, "Shift-Left Security" kavramının kalbidir. 
 
-Bunun için `.github/workflows/semgrep-sast.yml` hazırlandı. Geliştirici kodunu GitHub'a Pushladığında:
-- GitHub, CI/CD sunucusuna bir **Webhook** isteği yollayıp Pipeline'ı başlatır.
-- `Static Analysis` aracı olan Semgrep devreye girip, statik Python (Flask) kodlarını tarar. Eğer URL üzerinden Token sızıntısı sağlayan bir kural (misconfiguration) ihlali varsa `Exit 1` kodu fırlatarak Webhook cevabını değiştirir.
-- Bu Webhook, ana dallara yapılacak riskli Merge (PR) işlemlerini kalıcı olarak bloke eder.
+`.github/workflows/semgrep-sast.yml` içerisinde otomatik token sızıntısı tarayıcı bir analiz yapısı barındırır:
+* **Webhook Etkileşimi:** Geliştirici kodunu GitHub'a gönderdiği an (Push / Pull Request) bir Trigger (Tetikleyici) eylemi başlar.
+* 🧠 **Reasoning (Neden SAST?):**
+  Zafiyetin URL seviyesinde (`request.args.get`) kurgulandığını manuel kod incelemelerinde fark edemeyebiliriz. Semgrep `p/python` hedef rotası ile statik bir Abstract Syntax Tree (AST) araması yapar. Bir kural ihlali yakaladığında kodun GitHub üzerine "Merge" edilmesini `Exit 1` koduyla "Kırarak" (Pipeline Fail) engeller. Webhook bu Fail reaksiyonunu takımla anında paylaşarak sorunun canlı ortama (Root Network) gitmesini tamamen engeller.
+
+---
 
 ## 🐳 Adım 4: Docker & Network Isolation
-Adım adım ilerlettiğimiz Docker ve Docker Compose ağ yapılandırması güçlü bir yalıtım sağlar.
+Adım adım ilerlettiğimiz Docker tabanlı orkestrasyon (`docker-compose.yml`), zafiyeti kod bazında bitiremediğimiz durumda mimari ile boğmayı hedefler.
 
-* **Rootless Docker (USER 1000)**: Proje kökündeki `Dockerfile` incelendiğinde sunucunun `root` olarak çalışmadığını görürüz. `RUN useradd -m -u 1000 appuser` kısıtlaması, Konteyneri dışarı sızmalara karşı güvenceye alır.
-* **Internal Network Sızıntısı**: URL'de dolaşan tokenlar; `docker-compose.yml` içindeki sadece iki konteynerin oluşturduğu o dar alanda (Internal Network) dolaşırken dahi side-car konteynerlerine sızar.
-* **Nginx'in Header Taşıyıcılığı (Token Stripping)**: Nginx (Reverse Proxy) katmanı URL'de gelen tokeni yakalayıp alır, dışarıya ve sunucu trafiğinde bunu paramdan siler (strip eder) ve sadece güvenli `Authorization: Bearer <TOKEN>` başlığı olarak ana sunucuya taşır.
+* 🧠 **Reasoning 1 (Rootless User 1000 Uygulaması):** Dockerfile içerisinde eklediğimiz `RUN useradd -m -u 1000 appuser` kuralıdır. Konteyner ihlallerinde uygulamanın `root` yetkileri elinden alınır. Saldırgan Remote Code Execution (RCE) bulsa dahi, VM (Sanal Makine) kaçışları veya ana makineye (Host) sıçrama işlemi engellenir.
+* 🧠 **Reasoning 2 (Reverse Proxy Header Mitigasyonu):** İki Docker konteyneri arası (Backend ve Nginx) "Isolated Network" iletişimi izolemizidir ancak içeride paket dökümü alan bir Wireshark izleyicisi hala tokenları görebilir. Bu yüzden kurduğumuz **Nginx Reverse Proxy**, dışarıdan gelen `/secure/download?token=XYZ` yapısındaki Query parametresini ağın "Dış Ön Yüzünde" keser (Intercept). Parametreyi kopyalar, güvenli bir `Authorization: Bearer <TOKEN>` Headers katmanına yerleştirir ve API'ya öyle devreder (Token Stripping). Kendi Internal ağında zafiyet oluşmaz.
+
+---
 
 ## 🕷️ Adım 5: Tehdit Modelleme (Threat Modeling)
-`Token in Query Params` kullanımında sızan şifreler, basit bir zafiyeti nasıl bir **"Account Takeover" (Hesap Ele Geçirme)** saldırısına evriltebileceğini Threat Modeling belgemizde (`docs/Threat_Model.md`) görebilirsiniz:
+`Token in Query Params` kullanımında sızan Token'in, basit bir zafiyetten **"Account Takeover" (Hesap Ele Geçirme)** noktasına nasıl evrildiğinin tehdit senaryosudur:
 
-1. **Firewall Log Sızıntısı**: Çalışanın indirdiği zafiyetli sayfa NGFW/IDS cihazlarında loglanırken token'ı Gateway açık biçimiyle ele verir, analist olan tehdit aktörü bunu kopyalayıp kurbanın hesabına el koyar.
-2. **Browser Geçmişi (History)**: Aynı PC'ye erişen bir iç tehdit objesi, tarayıcı geçmişinin POST bodyleri aksine GET parametrelerini barındırdığını bilerek "Geçmiş" dizinlerinden token'ı çekip hesabın haklarını (Account Takeover) devralır.
+1. **Firewall / Proxy İzleri (Man in the Middle Pasif Loglama)**: Kurum ağından (Enterprise Network) çıkan bir kullanıcı, zafiyetli linke tıklar. Sınır Güvenlik Cihazları (Proxy, Gateway vb.) bu giden isteğin şifreli HTTPS olmasına bakmaksızın Domain ve URL kısımlarını loglar. Logları tarayan kötü niyetli bir Admin veya saldırgan, Gateway üzerinden kullanıcının `secure_token_placeholder` parolasını çekip hesabı (Account Takeover) devralır.
+2. **Browser Geçmişi (History) Cihaz Gaspı**: Tarayıcılar sadece GET parametrelerini "Browser History" ve "Cache" tablolarına otomatik kaydeder (Çünkü GET HTTP spesifikasyonunda veriyi idempoteant olarak okumak için vardır, state transferi için değil). Başkasının ofisine / masasına giden biri Ctrl+H kısayolu ile URL'nin bütününü görür ve oturum kimliğini gasp eder.
 
-**Mimarinin Getirdiği Çözüm (Code Snippet)**
-Sadece HTTP Header tabanlı Token Kabulünü zorlayan (app.py) yapı:
-```python
-@app.route('/secure/download', methods=['GET'])
-def secure_download():
-    # Sadece Header verisi analiz edilir (Adım 5 Zafiyet Çözümü)
-    auth_header = request.headers.get('Authorization')
-    if not auth_header or not auth_header.startswith("Bearer "):
-        return jsonify({"error": "Unauthorized"}), 401
-    
-    token = auth_header.split(" ")[1]
-    if hmac.compare_digest(token, VALID_TOKEN):
-        return jsonify({"message": "Secure Login Success", "data": "CONFIDENTIAL"})
-```
+* 🧠 **Reasoning (Çözüm Yaklaşımı ve Sonuç):** 
+Uygulamada devreye soktuğumuz Header tabanlı çözüm (`app.py - secure_download metodu`), sunucuyu sadece Authorization HTTP başlığını (Payload içinde gelir, loglanmaz) dezenfekte etmeye zorlar. Üstelik kriptografik olarak `hmac.compare_digest` (Zaman Atağı / Timing Attack Koruması) eşleşmesi yapılarak Account Takeover istismarının kökü kurumuş olur.
 
 ---
 
 ## 🏃 Testler ve Çalıştırma Yönergeleri
-Projede her bir dosya yapılandırıldı:
-1. Adım: `.env.example` dosyasını `.env` olarak değiştirin ve anahtar atanmasını yapın.
-2. Adım: Projeyi ayağa kaldırın:
-```bash
-docker-compose up -d --build
-```
+Projede her bir dosya ve izolasyon senaryosu çalışmaya hazırdır:
 
-**✅ Yazılan Kodlara Yönelik Unit Testler:**
-`tests/test_app.py` üzerinde zafiyetli ve güvenli yolların tespit edildiği PyTest altyapısı vardır. Çalıştırmak için:
+1. Adım: Çevre değişkeni örneğini `.env` olarak değiştirip şifre belirleyin.
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Adım: Tüm Container izolasyonlarını ayağa kaldırın:
+   ```bash
+   docker-compose up -d --build
+   ```
+
+**✅ Yazılan Kodlara Yönelik Unit Testler (Otomatik Doğrulama):**
+`tests/test_app.py` üzerine yazılmış PyTest altyapısı mevcuttur. Pipeline benzeri güvenlik doğrulamasını kendi bilgisayarınızda tetiklemek için:
 ```bash
 pip install -r requirements.txt
 pytest tests/
