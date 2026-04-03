@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: ./app
+    environment:
+      # Şifre çevre değişkeni ile güvenli aktarılır
+      - API_SECRET_KEY=1337
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - secure-net
+
+  proxy:
+    build:
+      context: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+    networks:
+      - secure-net
+
+networks:
+  secure-net:
+    driver: bridge

@@ -1,0 +1,23 @@
+name: "DevSecOps: SAST Scanner"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  semgrep:
+    name: Semgrep Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Semgrep Source Code Static Analysis
+        uses: returntocorp/semgrep-action@v1
+        with:
+          # CI süreçlerinde Node.js / Express güvenliği test ediliyor
+          config: "p/ci, p/nodejs"
+          # false olması Zafiyetli kod durumunda pipeline'i patlatıp Webhook PR Merge engelini devreeye sokar.
+          auditOn: false
