@@ -27,6 +27,9 @@ Proje, şu temel yapı taşlarını içeren eksiksiz bir iş akışını barınd
 5. **DevSecOps İş Akışı (`.github/workflows`)**
     - Geliştiricilerin gelecekte bu tür güvensiz kodları sisteme dahil etmesini engellemek için Semgrep tabanlı SAST (Static Application Security Testing) pipeline'ı kurulmuştur. Zafiyet algılandığında sistem PR (Pull Request) sürecinde `Merge` işlemini kilitler.
 
+6. **Rust ile Gelişmiş Adli Bilişim Aracı (`/tools/log_auditor`)**
+    - Sızan ve maskelenmemiş (Unmasked) tokenları sunucu günlüklerinde `(access.log)` arayıp bellek güvenliği (Memory Safety) prensipleriyle analiz eden, sıfırdan yazılmış komut satırı tabanlı (CLI) güvenlik denetçisi (Forensic Auditor). Siber güvenlikte güvenliğin tepe noktası olan "Rust" diliyle yazılmıştır.
+
 ## 🚀 Başlangıç ve Kurulum
 
 Sistemi dışa kapalı (izole) bir ağda ayağa kaldırmak ve senaryoları simüle etmek için **Docker** altyapısı kullanılmıştır.
@@ -49,6 +52,13 @@ curl "http://localhost/vulnerable/download?token=secure_api_key_placeholder"
 **B. Güvenli Mekanizma (Modern Header Yaklaşımı)**
 ```bash
 curl -H "Authorization: Bearer secure_api_key_placeholder" http://localhost/secure/download
+```
+
+### 3. Ekstra: Rust Forensic Auditor Aracını Çalıştırmak
+Nginx loglarında maskelenmeyi başaramamış zafiyetli tokenleri bulmak için bellek güvenliğine sahip Rust aracını test edebilirsiniz:
+```bash
+cd tools/log_auditor
+cargo run
 ```
 
 ## 🔐 Güvenlik Bildirimi
