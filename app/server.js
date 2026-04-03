@@ -5,8 +5,7 @@ const fs = require('fs');
 const app = express();
 const PORT = 3000;
 
-// Vize Gereksinimi: Site şifresi 1337
-const VALID_TOKEN = process.env.API_SECRET_KEY || '1337'; 
+const VALID_TOKEN = process.env.API_SECRET_KEY || 'secure_api_key_placeholder'; 
 
 // Gizli dosya içeriği (Dummy data)
 const confidentialDataPath = '/usr/src/app/confidential.txt';

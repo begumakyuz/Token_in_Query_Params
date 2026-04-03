@@ -1,3 +1,3 @@
-192.168.1.105 - - [03/Apr/2026:10:45:12 +0000] "GET /vulnerable/download?token=1337 HTTP/1.1" 200 4096 "-" "Mozilla/5.0"
+192.168.1.105 - - [03/Apr/2026:10:45:12 +0000] "GET /vulnerable/download?token=secure_api_key_placeholder HTTP/1.1" 200 4096 "-" "Mozilla/5.0"
 192.168.1.106 - - [03/Apr/2026:10:46:15 +0000] "GET /vulnerable/download?token=*** HTTP/1.1" 200 4096 "-" "Mozilla/5.0" (Log Scrubbing Devredeyken)
 192.168.1.107 - - [03/Apr/2026:10:47:30 +0000] "GET /secure/download HTTP/1.1" 200 4096 "-" "Mozilla/5.0" (Header Kulanımı)

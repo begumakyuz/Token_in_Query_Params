@@ -5,18 +5,18 @@ Bu belge, sistemde taşınan "Token" değerlerinin Query Params üzerinden geçi
 ## Saldırı Senaryosu (Information Disclosure)
 
 Kurumsal bir firmada çalışan "Alice", maaş bordrosunu indirmek için tıklamaktadır:  
-`http://localhost/vulnerable/download?token=1337`
+`http://localhost/vulnerable/download?token=secure_api_key_placeholder`
 
-Bu esnada "1337" parolası aşağıdaki yollarla saldırganın veya dış üçüncü şahısların eline geçer:
+Bu esnada "secure_api_key_placeholder" parolası aşağıdaki yollarla saldırganın veya dış üçüncü şahısların eline geçer:
 
 ### 1. Proxy Önbelleği (Cache) & Firewall Logları
 Şirketin çıkışını sağlayan `Fortinet/Palo Alto` firewall cihazları ya da proxy sunucuları aradaki trafiği analiz etmese bile URL dizilimini kaydeder. Cihaza erişen bir analist token'ı kolayca ele geçirir. Bu senaryo "Geniş Ağ Sızıntısı" olarak bilinir.
 
 ### 2. Browser Geçmişi (History)
-Makinesini kilitlemeden kalkan bir kullanıcının ardından bilgisayara geçen biri direkt olarak `Chrome->History` menüsünden URL'i ve oradaki `1337` şifresini düz metin görebilir.
+Makinesini kilitlemeden kalkan bir kullanıcının ardından bilgisayara geçen biri direkt olarak `Chrome->History` menüsünden URL'i ve oradaki token şifresini düz metin görebilir.
 
 ### 3. HTTP Referer Sızıntısı
-Olayın yaşandığı HTML sayfasında dış bir siteye (ör: Analytics) link/resim varsa, dış sitenin sunucusu bu URL'i `Referer` başlığı üzerinden aynen elde eder. Yani `1337` parolası kontrolümüz dışı bir 3. parti siteye gitmiş olur.
+Olayın yaşandığı HTML sayfasında dış bir siteye (ör: Analytics) link/resim varsa, dış sitenin sunucusu bu URL'i `Referer` başlığı üzerinden aynen elde eder. Yani parola kontrolümüz dışı bir 3. parti siteye gitmiş olur.
 
 ## Çözüm Önerisi ve Uygulama
 Node.js (Backend) ve Nginx (Reverse Proxy) üzerinden `Header-Based Authentication`a geçilmiş, URL içindeki token temizlenmiş (Stripping) ve API üzerinden güvenli hale çekilmiştir.

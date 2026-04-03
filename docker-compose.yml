@@ -6,7 +6,7 @@ services:
       context: ./app
     environment:
       # Şifre çevre değişkeni ile güvenli aktarılır
-      - API_SECRET_KEY=1337
+      - API_SECRET_KEY=secure_api_key_placeholder
     ports:
       - "3000:3000"
     restart: unless-stopped
