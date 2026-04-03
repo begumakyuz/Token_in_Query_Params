@@ -17,7 +17,7 @@ jobs:
       - name: Semgrep Source Code Static Analysis
         uses: returntocorp/semgrep-action@v1
         with:
-          # CI süreçlerinde Node.js / Express güvenliği test ediliyor
-          config: "p/ci, p/nodejs"
+          # CI süreçlerinde Python / Flask güvenliği test ediliyor
+          config: "p/ci, p/python"
           # false olması Zafiyetli kod durumunda pipeline'i patlatıp Webhook PR Merge engelini devreeye sokar.
           auditOn: false
