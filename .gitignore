@@ -1,5 +1,5 @@
 # Environment Variables
-.env
+# Vize gereği .env dosyası repoya pushlanabilmesi için ignore silindi.
 *.env
 
 # Logs
