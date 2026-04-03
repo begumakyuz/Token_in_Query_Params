@@ -1,23 +1,24 @@
-# L14 Token in Query Params Bypass - Tehdit Modeli (Information Disclosure)
+# L14 Token in Query Params Bypass - Tehdit Modeli (Account Takeover)
 
-Bu belge, sistemde taşınan "Token" değerlerinin Query Params üzerinden geçirilmesi sonucunda ne tür tehdit vektörleri oluştuğunu analiz eder.
+Bu doküman, sistemde kritik yetkilendirme (Authorization) nesnelerinin "Query Parametreleri" kullanılarak iletilmesinin sebep olabileceği **Account Takeover (Hesap Devralma)** ihlalini "Siber Tehdit Modellemesi" standartlarında analiz eder.
 
-## Saldırı Senaryosu (Information Disclosure)
+## Tehdit Vektörü (Threat Vector)
+Kurumsal bir çalışanın özel bir serviste oturum açarken veya gizli bir belgeyi (ör: finansal rapor) indirirken URL tabanlı kimlik denetimi kullanması.
+**Zafiyetli Link:** `http://hr.corp/vulnerable/download?token=secure_api_key_placeholder`
 
-Kurumsal bir firmada çalışan "Alice", maaş bordrosunu indirmek için tıklamaktadır:  
-`http://localhost/vulnerable/download?token=secure_api_key_placeholder`
+## Saldırı Senaryosu (Information Disclosure -> Account Takeover)
+Yukarıdaki istek sunucuyla başarılı şekilde konuşup dönecektir ancak URL'nin yapısı gereği bu işlem saniyeler içinde üç farklı rotada siber sızıntıya neden olur:
 
-Bu esnada "secure_api_key_placeholder" parolası aşağıdaki yollarla saldırganın veya dış üçüncü şahısların eline geçer:
+### 1. Firewall Loglarında Sızıntı (Gateway Intercept)
+Şirketlerin iç ağlarını korumak için kullandıkları **Next-Gen Firewall (NGFW)**, IDS/IPS cihazları veya SSL Inspection cihazları, trafiği şifreli (TLS) olsa bile araya girip URL'i çözer ve kaydeder. Cihaza log okuma için gelen kötü niyetli bir veri güvenliği analisti, süzdüğü URI değerlerinden tokenı ele geçirir ve hesabı kopyalayarak yetkili bir Account Takeover gerçekleştirir.
 
-### 1. Proxy Önbelleği (Cache) & Firewall Logları
-Şirketin çıkışını sağlayan `Fortinet/Palo Alto` firewall cihazları ya da proxy sunucuları aradaki trafiği analiz etmese bile URL dizilimini kaydeder. Cihaza erişen bir analist token'ı kolayca ele geçirir. Bu senaryo "Geniş Ağ Sızıntısı" olarak bilinir.
+### 2. Browser Geçmişi Sızıntısı (Physical Proxy)
+Web tarayıcılarındaki "Browser History" ve "Cache" dosyaları, POST bodyleri aksine URL'leri düz metin (plaintext) biçimde saniye saniye kaydeder. Hedefin cihazına erişim sağlayan (Kilit ekranı hatası, veya Remote Execution gibi) bir tehdit aktörü tarayıcı dizinini kazırsak "token: XXX" parolasını zahmetsizce elde eder, hedef cihazdan uzaklaşsa bile kendi bilgisayarında token ile hesabı ele geçirebilir.
 
-### 2. Browser Geçmişi (History)
-Makinesini kilitlemeden kalkan bir kullanıcının ardından bilgisayara geçen biri direkt olarak `Chrome->History` menüsünden URL'i ve oradaki token şifresini düz metin görebilir.
+### 3. HTTP Referer (3rd Party Leak)
+Token içeren HTML sayfasında dışarıya dönük tek bir görsel, tek bir Google Analytics / CDN scripti var ise, kullanıcının tarayıcısı bu scripti yüklemek için 3. partilere bağlanırken `Referer` başlığı olarak o an bulunduğu sayfanın URL'sini boylu boyunca paketler ve gönderir.
 
-### 3. HTTP Referer Sızıntısı
-Olayın yaşandığı HTML sayfasında dış bir siteye (ör: Analytics) link/resim varsa, dış sitenin sunucusu bu URL'i `Referer` başlığı üzerinden aynen elde eder. Yani parola kontrolümüz dışı bir 3. parti siteye gitmiş olur.
+## Mimari Çözüm ve Mitigasyon (Sıkılaştırma)
+Sistem tasarımları gereği, Yetkilendirme tokenlarının "Header" içinde gönderilmesi endüstri standardıdır. `app/server.js` dosyasında yazılan kod; HTTP katmanını sadece `Authorization: Bearer <TOKEN>` yapısıyla iletişime zorlamaktadır.
 
-## Çözüm Önerisi ve Uygulama
-Node.js (Backend) ve Nginx (Reverse Proxy) üzerinden `Header-Based Authentication`a geçilmiş, URL içindeki token temizlenmiş (Stripping) ve API üzerinden güvenli hale çekilmiştir.
-- `app/server.js` modülünde `/secure/download` inceleyiniz.
+Böylelikle Nginx ve Firewall günlüklerinde sadece hedef dizin "GET /secure/download" yazar, içindeki yetki belgesi logların dışına itilmiş olur.
