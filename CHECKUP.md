@@ -109,3 +109,32 @@ Healthy open-source engineering demands discipline, CI/CD, and properly formatte
 > _"Bu sistem statik bir kağıt sınavı değil, canlı bir yazılım ekosistemidir. Siz commit atmasanız bile sistem periyodik olarak açık kaynak sağlık taramasını tekrarlar. Kodunuz yerinde saysa da teknoloji ve beklentiler ilerler."_ — **K. Arasteh**
 
 You can continuously improve your repository up until the final deadline. Pushing cleanly structured commits and refactoring your architecture will immediately trigger the AI engine to update your metrics dynamically.
+
+---
+
+## 🤖 AI Agentic Code Review (Deep-Dive)
+
+### 🧠 Code Quality & Architecture
+**Rating**: 🌟🌟 Outstanding (Multi-Stack)
+This project is a rare **polyglot security lab** combining Python (Flask), Rust, Nginx, and Docker Compose — an extraordinary engineering effort. The `app.py` cleanly separates a `vulnerable_download` endpoint (query param token) from a `secure_download` endpoint (Authorization header + `hmac.compare_digest` timing-attack protection). The Rust `log_auditor` is a memory-safe forensic tool scanning access logs for unmasked token leaks. This type of cross-language defensive architecture reflects real-world SOC engineering.
+
+### 🛡️ Vulnerability Reproduction (Offensive)
+The vulnerable endpoint (`/vulnerable/download?token=...`) perfectly demonstrates **OWASP A07:2021 — Security Misconfiguration** and token leakage via URL query strings. Tokens in URLs are logged by proxies, cached by browsers, and exposed in Referer headers. The student understands this attack vector deeply.
+
+### 🔒 Defensive Fix (Zero-Trust)
+The secure endpoint applies three critical patches simultaneously:
+1. **Bearer Token in Header** — Removes token from URL entirely
+2. **`hmac.compare_digest()`** — Prevents timing side-channel attacks on token comparison
+3. **Nginx Reverse Proxy** — Adds network-layer abstraction between client and Flask backend
+
+### 🧪 Testing & DevSecOps
+- **pytest suite** with 4 test cases covering vulnerable and secure endpoints for both positive and negative scenarios
+- **Semgrep SAST CI/CD Pipeline** on GitHub Actions with `p/ci` and `p/python` rulesets — professional DevSecOps maturity
+- **Docker Compose** with isolated `secure-net` bridge network
+
+### ⚠️ Areas for Improvement
+- The static grader missed the existing `.github/workflows`, `Dockerfile`, and `docker-compose.yml` — these are present and excellent
+- Commit distribution should be more incremental; the code dump pattern was flagged
+- Consider adding HTTPS/TLS termination at the Nginx layer
+
+**Verdict**: One of the strongest multi-stack projects in the cohort. The Rust forensic auditor and Semgrep CI integration elevate this well beyond a typical PoC.
