@@ -14,6 +14,23 @@
   <img src="https://img.shields.io/badge/rust-3.0_parallel-orange.svg" alt="Rust Version"/>
 </p>
 
+## 📖 İçindekiler (Table of Contents)
+- [📋 Proje Bilgileri](#proje-bilgileri)
+- [🎬 PROJE DEMOSU](#proje-demosu)
+- [🚀 Öne Çıkan Teknik Derinlik](#öne-çıkan-teknik-derinlik)
+- [🏗️ Mimari Yapı & Akış](#mimari-yapı-akış)
+- [🕷️ Tehdit Modelleme (STRIDE)](#tehdit-modelleme-stride)
+- [🛠️ Adım 1: Kurulum & Kod Analizi](#adım-1-kurulum-kod-analizi)
+- [🔎 Adım 2: Adli Bilişim](#adım-2-adli-bilişim)
+- [⚙️ Adım 3: İş Akışları (CI/CD)](#adım-3-iş-akışları-cicd)
+- [🐳 Adım 4: Docker & Isolation](#adım-4-docker-isolation)
+- [🕷️ Adım 5: Tehdit Modelleme Senaryosu](#adım-5-tehdit-modelleme-senaryosu)
+- [🚀 Kurulum ve Çalıştırma](#kurulum-ve-çalıştırma-rehberi)
+- [🏷️ Çözüm & Mitigation](#çözüm-mitigation)
+- [📄 Lisans & Katkı](#lisans-katkı)
+
+---
+
 ## 📋 Proje Bilgileri
 *   **Öğrenci:** Begüm Akyüz
 *   **Danışman:** Öğr. Gör. Keyvan Arasteh Abbasabad
@@ -250,6 +267,14 @@ Hassas veri taşıyan işlemler GET yerine POST ile yapılmalıdır:
 Hızla süresi dolan (Expires) ve yenilenebilen (Refresh Token) geçici anahtarlar kullanılarak sızıntıların etkisi minimize edilir.
 
 ---
+
+---
+
+## 📄 Lisans & Katkı
+Bu proje Apache 2.0 lisansı altında korunmaktadır. Detaylar ve katkı yönergeleri için:
+- [LICENSE](file:///c:/Users/User/Desktop/guvenli_web/LICENSE)
+- [CONTRIBUTING.md](file:///c:/Users/User/Desktop/guvenli_web/CONTRIBUTING.md)
+- [CHANGELOG.md](file:///c:/Users/User/Desktop/guvenli_web/CHANGELOG.md)
 
 > [!TIP]
 > Bu projenin en büyük başarısı, sadece hatayı bulmak değil; hatanın **Nginx, Python ve Rust** katmanlarında nasıl merkezi olarak çözülebileceğini (Automation) ispatlamış olmasıdır.
