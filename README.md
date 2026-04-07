@@ -41,15 +41,17 @@
 ## 🎬 Demo & Practical Step-by-Step Proof
 Bu proje, sadece teorik bir çözüm değil, test ortamında **adım adım uygulanmış** bir güvenlik mimarisidir.
 
-### 🎥 Official Demo Video
-Sistemin canlı çalışmasını, Nginx log temizleme ve Rust forensic analizini içeren 30 saniyelik rehber:
-- **[🎞️ İzlemek için buraya tıklayın (demo/demo.mp4)](demo/demo.mp4)**
+### 🎥 Official Demo (Auto-Play)
+Sistemin canlı çalışmasını ve güvenlik katmanlarını aşağıdaki videodan izleyebilirsiniz:
+
+https://github.com/begumakyuz/Token_in_Query_Params/raw/main/demo/demo.mp4
+
+> [!TIP]
+> Eğer video yukarıda yüklenmiyorsa, **[🛡️ Buraya tıklayarak manuel olarak izleyebilirsiniz](demo/demo.mp4)**.
 
 ### 📖 Practical Step-by-Step Audit Guide (Absolute Proof)
-Eğer videoyu izleyemiyorsanız, ekran görüntüleri ile desteklenmiş **Adım Adım Uygulama Rehberi**'ne göz atın:
+Ekran görüntüleri ile desteklenmiş **Adım Adım Uygulama Rehberi**:
 - **[🛡️ Pratik Audit Rehberi (docs/Practical_Audit_Guide.md)](docs/Practical_Audit_Guide.md)**
-
-Bu rehber, projenin **Vulnerable → 403 Forbidden → Secure Success** aşamalarını ekran kanıtlarıyla sunar.
 
 ---
 
