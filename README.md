@@ -218,3 +218,34 @@ pip install -r requirements.txt
 # Yazılan güvenlik doğrulama testlerinin tetiklenmesi
 pytest tests/
 ```
+
+---
+
+# 🏷️ Çözüm & Mitigation (En İyi Uygulamalar)
+
+Projenin akademik savunmasında (viva) sorulabilecek en kritik sorulardan biri şudur: **"Peki Begüm, Token'ları URL (Query Param) yerine nerede taşımalıydık?"**
+
+Aşağıdaki maddeler, bu projenin temelini oluşturan **güvenlik iyileştirme planı** için altın kurallardır:
+
+### 1. 🛡️ HTTP Authorization Header (Bearer Token)
+Token'lar asla URL içinde taşınmamalıdır (Çünkü Nginx, Apache ve Browser geçmişinde `PLAIN TEXT` olarak loglanırlar). Bunun yerine:
+- **Yöntem:** Token, `Authorization: Bearer <JWT_veya_SECRET>` şeklinde HTTP Header'ları içinde gönderilmelidir.
+- **Fayda:** Bu sayede loglarda sadece route (`/secure/download`) görünür, gizli token görünmez.
+
+### 2. 🍪 Secure & HttpOnly Cookies
+Web arayüzü olan uygulamalarda token'ları çerezlerde (Cookie) saklamak en güvenli yoldur:
+- **Secure Flag:** Sadece HTTPS üzerinden iletilir.
+- **HttpOnly Flag:** JavaScript (XSS saldırıları) ile çereze erişilemez.
+- **SameSite Flag:** CSRF saldırılarına karşı koruma sağlar.
+
+### 3. 📝 HTTP POST Request Body
+Hassas veri taşıyan işlemler GET yerine POST ile yapılmalıdır:
+- **Fayda:** GET parametreleri URL'dedir, POST parametreleri ise şifreli paket gövdesindedir (HTTPS kullanıldığında).
+
+### 4. ⏳ Kısa Süreli Token'lar (Short-lived JWT)
+Hızla süresi dolan (Expires) ve yenilenebilen (Refresh Token) geçici anahtarlar kullanılarak sızıntıların etkisi minimize edilir.
+
+---
+
+> [!TIP]
+> Bu projenin en büyük başarısı, sadece hatayı bulmak değil; hatanın **Nginx, Python ve Rust** katmanlarında nasıl merkezi olarak çözülebileceğini (Automation) ispatlamış olmasıdır.
