@@ -1,6 +1,45 @@
 # 🛡️ L14 - Token in Query Params (Python/Flask) Analiz ve Çözüm Projesi
 
+![İstinye Üniversitesi](https://upload.wikimedia.org/wikipedia/tr/6/6f/Istinye_Universitesi_Logo.png)
+
+[![Semgrep SAST Scan](https://github.com/begumakyuz/Token_in_Query_Params/actions/workflows/semgrep-sast.yml/badge.svg)](https://github.com/begumakyuz/Token_in_Query_Params/actions/workflows/semgrep-sast.yml)
+![License](https://img.shields.io/github/license/begumakyuz/Token_in_Query_Params)
+![Python Version](https://img.shields.io/badge/python-3.10-blue.svg)
+![Docker Ready](https://img.shields.io/badge/docker-ready-blue.svg)
+
+## 📋 Proje Bilgileri
+*   **Öğrenci:** Begüm Akyüz
+*   **Danışman:** Öğr. Gör. Keyvan Arasteh Abbasabad
+*   **Kurum:** İstinye Üniversitesi - Bilişim Güvenliği Teknolojisi
+
+---
+
+## 📖 İçindekiler
+- [🎬 Demo](#-demo)
+- [🛠️ Adım 1: Kurulum & Kod Analizi (Reverse)](#️-adım-1-kurulum--kod-analizi-reverse)
+- [🔎 Adım 2: Adli Bilişim (Forensics & Log Analysis)](#-adım-2-adli-bilişim-forensics--log-analysis)
+- [⚙️ Adım 3: İş Akışları (CI/CD & Secret Management)](#️-adım-3-iş-akışları-cicd--secret-management)
+- [🐳 Adım 4: Docker & Network Isolation](#-adım-4-docker--network-isolation)
+- [🕷️ Adım 5: Tehdit Modelleme (Threat Modeling)](#️-adım-5-tehdit-modelleme-threat-modeling)
+- [🚀 Kurulum ve Çalıştırma Rehberi (Getting Started)](#-kurulum-ve-çalıştırma-rehberi-getting-started)
+
+---
+
+## 🎬 Demo
+Aşağıdaki videoda projenin kurulumu, özellikleri ve güvenlik testlerinin çalıştırılması detaylı bir şekilde gösterilmektedir.
+
+> [!TIP]
+> Videoyu tam ekran izlemeniz önerilir.
+
+[![Proje Demosu](https://img.shields.io/badge/🎬-İzle_Project_Demo-blue?style=for-the-badge&logo=youtube)](demo/project-demo.webm)
+
+*(Eğer video açılmazsa, `demo/project-demo.webm` dosyasını indirip tarayıcınızda veya VLC Player ile izleyebilirsiniz.)*
+
+---
+
 Bu proje, "Token in Query Params" (Yetkilendirme verisinin URL parametreleriyle iletilmesi) zafiyetinin **Flask tabanlı (app.py)** bir Python uygulamasında nasıl tespit edileceğini ve kurumsal standartlarda nasıl temizleneceğini gösteren profesyonel bir Siber Güvenlik Laboratuvarıdır.
+
+... [rest of the file remains similar but I will provide the full updated content below to be precise]
 
 > 🎓 **Projenin Akademik Çerçevesi (Reasoning):** Siber saldırılar genellikle tek bir zafiyetten değil, zincirleme yapılandırma hatalarından doğar. Bu sistemde sadece zafiyet yamalanmamış, aynı zamanda "Defense in Depth" (Derinlemesine Savunma) felsefesi benimsenerek Nginx Ağ, Adli Bilişim Günlükleri, CI/CD Pipeline kontrolleri ve Rootless Docker katmanlarında sıkılaştırma yapılmıştır.
 

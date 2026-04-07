@@ -1,6 +1,6 @@
 # Environment Variables
-# Vize gereği .env dosyası repoya pushlanabilmesi için ignore silindi.
-*.env
+# SECURITY: Never commit .env files! Use .env.example instead.
+.env
 
 # Logs
 logs/
