@@ -33,7 +33,7 @@ Aşağıdaki 7 saniyelik yüksek kaliteli rehberde, projenin **Elite Parallel Ru
 
 ## 🚀 Öne Çıkan Teknik Derinlik (Technical Depth)
 
-### 🦀 Parallel Forensic Engine (Rust v3.0)
+### 🦀 Parallel Forensic Engine (Rust v4.0)
 Projenin adli bilişim katmanı, Rust dili ile **Multi-threaded (Parallel)** mimaride yeniden yazılmıştır (`std::thread`). Bu sayede:
 - Büyük log dosyaları 4 farklı işlemci çekirdeğinde aynı anda taranır.
 - Bellek güvenliği (Memory Safety) garantilenmiştir.
@@ -50,34 +50,38 @@ graph TD
     D -->|Hardened Middleware| E{Rate Limit & Header Check}
     E -->|INVALID| F[Parallel Forensic Reports]
     E -->|VALID| G[Secure Download Service]
-    C -->|Rust v3.0 Parallel Scan| H[AUDIT_REPORT.md]
-```
-    E -->|FAILED| F[Incident forensic Log]
-    E -->|PASSED| G[Secure Download Access]
-    C -->|Rust Forensic Scan| H[AUDIT_REPORT.md]
+    C -->|Rust v4.0 Parallel Scan| H[AUDIT_REPORT.md]
 ```
 
 ### 🔐 Güvenli Kimlik Doğrulama Dizisi
 
 ```mermaid
 sequenceDiagram
-    participant User
-    participant Proxy as Nginx Proxy
-    participant App as Flask Backend
-    participant Auditor as Rust Forensic Scan
+    autonumber
+    participant U as 👤 İstemci (User/Attacker)
+    participant P as 🛡️ Nginx Reverse Proxy
+    participant B as 🐍 Flask Backend (API)
+    participant A as 🦀 Rust Forensic Auditor (v4.0)
 
-    User->>Proxy: GET /vulnerable?token=SECRET
-    Note right of Proxy: Scrubbing token=***
-    Proxy->>App: Forward (VULNERABLE)
-    App-->>User: 200 OK (LEAKED)
-    
-    User->>Proxy: GET /secure (with Auth Header)
-    Proxy->>App: Forward (SECURE)
-    App-->>User: 200 OK (SAFE)
+    Note over U, A: 🔓 Senaryo 1: Güvensiz URL Token Erişimi (Detection Phase)
+    U->>P: GET /vulnerable?token=SECRET_123
+    Note right of P: ✍️ Log Yazımı: access.log (token=*** maskelenir)
+    P->>B: İsteği Aktar (Payload Maskelenmiş)
+    B-->>U: HTTP 200 (Başarılı fakat Güvensiz)
 
-    loop Every Session
-        Auditor->>Proxy: Scan access.log
-        Note over Auditor: Detect unmasked tokens
+    Note over U, A: 🔒 Senaryo 2: Güvenli Header Tabanlı Erişim (Mitigation Phase)
+    U->>P: GET /secure (Authorization: Bearer <token>)
+    P->>B: Auth Header Doğrulaması Aktar
+    B->>B: hmac.compare_digest() Kontrolü
+    B-->>U: HTTP 200 (Güvenli & Standart Uyumlu)
+
+    rect rgb(240, 240, 240)
+        Note over A: 🔍 Arka Plan Adli Bilişim Taraması
+        loop Multi-threaded Parallel Scan
+            A->>P: access.log Dosyasını Oku
+            A->>A: Hassas Veri Desenlerini Tara
+            A-->>B: Forensic Audit (MD/CSV) Raporu Üret
+        end
     end
 ```
 
