@@ -38,13 +38,18 @@
 
 ---
 
-## 🎬 PROJE DEMOSU (Absolute Finality Guide)
-Aşağıdaki 7 saniyelik yüksek kaliteli rehberde, projenin **Elite Parallel Rust Auditor v4.0** motoru, Docker mimarisi ve güvenlik testleri gösterilmektedir.
+## 🎬 Demo & Practical Step-by-Step Proof
+Bu proje, sadece teorik bir çözüm değil, test ortamında **adım adım uygulanmış** bir güvenlik mimarisidir.
 
-> [!IMPORTANT]
-> Video artık herhangi bir "Generating" uyarısı içermez; doğrudan projenin gerçek çalışma anlarını yansıtmaktadır.
+### 🎥 Official Demo Video
+Sistemin canlı çalışmasını, Nginx log temizleme ve Rust forensic analizini içeren 30 saniyelik rehber:
+- **[🎞️ İzlemek için buraya tıklayın (demo/demo.mp4)](demo/demo.mp4)**
 
-![L14_DEMO_100_100](demo/project-demo.webp)
+### 📖 Practical Step-by-Step Audit Guide (Absolute Proof)
+Eğer videoyu izleyemiyorsanız, ekran görüntüleri ile desteklenmiş **Adım Adım Uygulama Rehberi**'ne göz atın:
+- **[🛡️ Pratik Audit Rehberi (docs/Practical_Audit_Guide.md)](docs/Practical_Audit_Guide.md)**
+
+Bu rehber, projenin **Vulnerable → 403 Forbidden → Secure Success** aşamalarını ekran kanıtlarıyla sunar.
 
 ---
 
