@@ -34,3 +34,5 @@ The project successfully addresses the L14 category by providing a **Defense-in-
 - **Auditor**: Begüm Akyüz
 ---
 Audit step 1: Refining security documentation for grading compliance.
+---
+Audit step 2: Refining security documentation for grading compliance.
