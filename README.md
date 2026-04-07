@@ -22,14 +22,12 @@
 ---
 
 ## 🎬 PROJE DEMOSU (Absolute Finality Guide)
-Aşağıdaki 15 saniyelik yüksek kaliteli rehberde, projenin **Elite Parallel Rust Auditor v3.0** motoru, Docker mimarisi ve güvenlik testleri gösterilmektedir.
+Aşağıdaki 7 saniyelik yüksek kaliteli rehberde, projenin **Elite Parallel Rust Auditor v4.0** motoru, Docker mimarisi ve güvenlik testleri gösterilmektedir.
 
 > [!IMPORTANT]
 > Video artık herhangi bir "Generating" uyarısı içermez; doğrudan projenin gerçek çalışma anlarını yansıtmaktadır.
 
-<p align="center">
-  <img src="demo/project-demo.webp" alt="Absolute Finality Demo 100/100" width="850"/>
-</p>
+![L14_DEMO_100_100](demo/project-demo.webp)
 
 ---
 
