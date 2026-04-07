@@ -1,11 +1,18 @@
-# 🛡️ L14 - Token in Query Params (Python/Flask) Analiz ve Çözüm Projesi
+# 🏛️ L14 - Token in Query Params (Python/Flask) Analiz ve Çözüm Projesi
 
-![İstinye Üniversitesi](https://upload.wikimedia.org/wikipedia/tr/6/6f/Istinye_Universitesi_Logo.png)
+<p align="center">
+  <img src="docs/istinye_logo.svg" alt="İstinye Üniversitesi" width="300"/>
+</p>
 
-[![Semgrep SAST Scan](https://github.com/begumakyuz/Token_in_Query_Params/actions/workflows/semgrep-sast.yml/badge.svg)](https://github.com/begumakyuz/Token_in_Query_Params/actions/workflows/semgrep-sast.yml)
-![License](https://img.shields.io/github/license/begumakyuz/Token_in_Query_Params)
-![Python Version](https://img.shields.io/badge/python-3.10-blue.svg)
-![Docker Ready](https://img.shields.io/badge/docker-ready-blue.svg)
+<p align="center">
+  <a href="https://github.com/begumakyuz/Token_in_Query_Params/actions/workflows/semgrep-sast.yml">
+    <img src="https://github.com/begumakyuz/Token_in_Query_Params/actions/workflows/semgrep-sast.yml/badge.svg" alt="Semgrep SAST Scan"/>
+  </a>
+  <img src="https://img.shields.io/github/license/begumakyuz/Token_in_Query_Params" alt="License"/>
+  <img src="https://img.shields.io/badge/python-3.13-blue.svg" alt="Python Version"/>
+  <img src="https://img.shields.io/badge/docker-ready-blue.svg" alt="Docker Ready"/>
+  <img src="https://img.shields.io/badge/rust-2.1_auditor-orange.svg" alt="Rust Version"/>
+</p>
 
 ## 📋 Proje Bilgileri
 *   **Öğrenci:** Begüm Akyüz
@@ -14,19 +21,20 @@
 
 ---
 
-## 🎬 PROJE DEMOSU (Animated Guide)
-Aşağıdaki animasyonda projenin kurulumu, özellikleri ve güvenlik testlerinin çalıştırılması detaylı bir şekilde gösterilmektedir. 
-*(Görüntü kalitesi ve uyumluluk için WebP animasyon formatı kullanılmıştır.)*
+## 🎬 PROJE DEMOSU (Professional Guide)
+Aşağıdaki 20 saniyelik animasyonda projenin kurulumu, profesyonel mimarisi ve güvenlik testlerinin çalıştırılması interaktif dashboard üzerinden gösterilmektedir.
 
 > [!TIP]
-> Animasyon, gerçek işlem süreleriyle (Kurulum -> Test -> Analiz) senkronize edilmiştir.
+> Animasyon, projenin gerçek işlem süreleriyle (Kurulum -> Mimari -> Test -> Analiz) tam senkronize edilmiştir.
 
-![Proje Demosu (Final)](demo/project-demo.webp)
+<p align="center">
+  <img src="demo/project-demo.webp" alt="Proje Demosu (Final Perfection)" width="800"/>
+</p>
 
 ---
 
 ## 📖 İçindekiler
-- [🎬 PROJE DEMOSU](#-proje-demosu-animated-guide)
+- [🎬 PROJE DEMOSU](#-proje-demosu-professional-guide)
 - [🏗️ Mimari Yapı & Akış (Diagrams)](#️-mimari-yapı--akış-diagrams)
 - [🕷️ Tehdit Modelleme (STRIDE)](#️-tehdit-modelleme-stride)
 - [🛠️ Adım 1: Kurulum & Kod Analizi (Reverse)](#️-adım-1-kurulum--kod-analizi-reverse)
@@ -40,14 +48,18 @@ Aşağıdaki animasyonda projenin kurulumu, özellikleri ve güvenlik testlerini
 
 ## 🏗️ Mimari Yapı & Akış (Diagrams)
 
-Proje, "Derinlemesine Savunma" (Defense in Depth) felsefesini benimser. Aşağıdaki akış diyagramı, bir Token'in URL'den sızmasını nasıl engellediğimizi ve sızdıysa nasıl tespit ettiğimizi göstermektedir:
+Proje, kurumsal düzeyde "Derinlemesine Savunma" (Defense in Depth) felsefesini benimser. Aşağıdaki akış diyagramı, bir Token'in URL'den sızmasını nasıl engellediğimizi ve sızdıysa nasıl tespit ettiğimizi göstermektedir:
 
 ```mermaid
 graph TD
     A[İstemci / Attacker] -->|Request with Token in URL| B(Nginx Reverse Proxy)
     B -->|Log Scrubbing & Masking| C[access.log / forensics]
-    B -->|Token Stripping & Header Injection| D[Python / Flask API]
-    D -->|Security Middleware| E{Rate Limit & Header Check}
+    B -->|Token Stripping & Header Injection| D[Python / Flask API v2.1]
+    D -->|Hardened Middleware| E{Rate Limit & Header Check}
+    E -->|INVALID| F[Forensic Incident Reporting]
+    E -->|VALID| G[Secure Download Service]
+    C -->|Rust Forensic Scan| H[AUDIT_REPORT.md]
+```
     E -->|FAILED| F[Incident forensic Log]
     E -->|PASSED| G[Secure Download Access]
     C -->|Rust Forensic Scan| H[AUDIT_REPORT.md]

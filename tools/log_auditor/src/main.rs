@@ -2,138 +2,130 @@ use std::env;
 use std::fs::{self, File};
 use std::io::{self, BufRead, Write};
 use std::path::Path;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
-/// [L14-Auditor] Forensic Security Scanner
-/// Technical Depth Enhancement for Academic Grade 100/100
-struct AuditStats {
-    total_lines: usize,
+/// [L14-Auditor] v2.1 Professional Forensic Scanner
+/// Purpose: Identify unmasked sensitive credentials in server logs.
+#[derive(Debug, Default)]
+struct AuditSummary {
+    processed_lines: usize,
     token_leaks: usize,
-    password_leaks: usize,
-    key_leaks: usize,
-    start_time: Instant,
+    credential_leaks: usize,
+    key_vulnerabilities: usize,
+    execution_time: Option<Duration>,
 }
 
 fn main() {
-    let start_time = Instant::now();
-    println!("🛡️  [L14-Auditor] Starting Deep Forensic Incident Response Scan...");
+    let timer = Instant::now();
+    println!("🛡️  [L14-Auditor] Initializing High-Performance Forensic Scan...");
 
-    // Target log path detection
+    // Target log detection (Default to standard forensic path)
     let log_path = env::args()
         .nth(1)
-        .unwrap_or_else(|| "../../forensics/access.log".to_string());
-
-    let mut stats = AuditStats {
-        total_lines: 0,
-        token_leaks: 0,
-        password_leaks: 0,
-        key_leaks: 0,
-        start_time,
-    };
+        .unwrap_or_else(|| "forensics/access.log".to_string());
 
     if !Path::new(&log_path).exists() {
-        eprintln!("❌ [CRITICAL] Log file not found: {}. Scan aborted.", log_path);
+        eprintln!("❌ [FATAL] Forensic data source missing: {}. Audit terminated.", log_path);
         std::process::exit(1);
     }
 
-    match read_lines(&log_path) {
-        Ok(lines) => {
-            let mut audit_report = String::new();
-            audit_report.push_str("# 📜 Forensic Audit Report\n\n");
+    let mut summary = AuditSummary::default();
 
-            for (index, line) in lines.enumerate() {
-                if let Ok(content) = line {
-                    stats.total_lines += 1;
-                    
-                    // Multi-vector Security Scanning
-                    let (is_vuln, reason) = analyze_security_risk(&content);
-                    
-                    if is_vuln {
-                        let alert = format!(
-                            "🚨 [ALERT] {} at Line {}: {}",
-                            reason, index + 1, content
-                        );
-                        println!("{}", alert);
-                        audit_report.push_str(&format!("* {}\n", alert));
-
-                        match reason.as_str() {
-                            "TOKEN_LEAK" => stats.token_leaks += 1,
-                            "PASSWORD_IFSSA" => stats.password_leaks += 1,
-                            "PRIVATE_KEY_EXPOSURE" => stats.key_leaks += 1,
-                            _ => (),
-                        }
-                    }
-                }
+    match scan_log_file(&log_path, &mut summary) {
+        Ok(audit_content) => {
+            summary.execution_time = Some(timer.elapsed());
+            display_audit_results(&summary);
+            
+            if let Err(e) = generate_forensic_report(&log_path, audit_content) {
+                eprintln!("⚠️  [WARNING] Forensic report generation failed: {}", e);
             }
-
-            print_final_summary(&stats);
-            save_audit_report(audit_report, &log_path);
         }
         Err(e) => {
-            eprintln!("❌ [IO_ERROR] Failed to read logs: {}", e);
+            eprintln!("❌ [RUNTIME_ERROR] Security scan failed: {}", e);
             std::process::exit(1);
         }
     }
 }
 
-/// Security Risk Analysis Engine
-/// Detects multiple patterns of sensitive data exposure
-fn analyze_security_risk(line: &str) -> (bool, String) {
-    let lowercase_line = line.to_lowercase();
-    
-    // 1. L14 Specific: Token in Query Params (Unmasked)
-    if line.contains("token=") && !line.contains("token=***") {
-        return (true, "TOKEN_LEAK".to_string());
-    }
-    
-    // 2. High Risk: Password/Secret leaked in body or URL
-    if (lowercase_line.contains("password=") || lowercase_line.contains("passwd=")) 
-        && !line.contains("=***") {
-        return (true, "PASSWORD_IFSSA".to_string());
-    }
+/// Scans the log file and populates the audit summary.
+fn scan_log_file(path: &str, summary: &mut AuditSummary) -> io::Result<String> {
+    let file = File::open(path)?;
+    let reader = io::BufReader::new(file);
+    let mut report = String::from("# 📑 Forensic Security Audit Report\n\n");
 
-    // 3. Critical Risk: Private Key Fragments
-    if line.contains("BEGIN PRIVATE KEY") || line.contains("ssh-rsa") {
-        return (true, "PRIVATE_KEY_EXPOSURE".to_string());
-    }
+    for (line_num, line_result) in reader.lines().enumerate() {
+        let line = line_result?;
+        summary.processed_lines += 1;
 
-    (false, "".to_string())
-}
+        if let Some(risk_type) = evaluate_line_risk(&line) {
+            let alert = format!(
+                "🚨 [ALERT] {} detected at line {}: {}",
+                risk_type, line_num + 1, line
+            );
+            println!("{}", alert);
+            report.push_str(&format!("* {}\n", alert));
 
-fn print_final_summary(stats: &AuditStats) {
-    let duration = stats.start_time.elapsed();
-    println!("\n--------------------------------------------------");
-    println!("📊 [AUDIT SUMMARY - Forensic Evidence]");
-    println!("   Total Logs Scanned    : {}", stats.total_lines);
-    println!("   Active Token Leaks    : {}", stats.token_leaks);
-    println!("   Password Discovered   : {}", stats.password_leaks);
-    println!("   Critical Key Exposure : {}", stats.key_leaks);
-    println!("   Scan Performance      : {:?}", duration);
-    println!("--------------------------------------------------");
-
-    let total_risks = stats.token_leaks + stats.password_leaks + stats.key_leaks;
-    if total_risks > 0 {
-        println!("🔥 [STATUS: FAILED] High-risk vulnerabilities found. Mitigation required.");
-    } else {
-        println!("✅ [STATUS: CLEAN] No sensitive data patterns detected.");
-    }
-}
-
-fn save_audit_report(report: String, source_path: &str) {
-    let report_name = format!("{}.audit.md", source_path);
-    if let Ok(mut file) = fs::File::create(&report_name) {
-        if write!(file, "{}", report).is_ok() {
-            println!("📄 [REPORT] Full forensic audit saved to: {}", report_name);
+            match risk_type.as_str() {
+                "TOKEN_LEAK" => summary.token_leaks += 1,
+                "PASSWORD_EXPOSURE" => summary.credential_leaks += 1,
+                "PRIVATE_KEY_LEAK" => summary.key_vulnerabilities += 1,
+                _ => (),
+            }
         }
     }
+
+    Ok(report)
 }
 
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where
-    P: AsRef<Path>,
-{
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
+/// Core logic for identifying sensitive data patterns.
+fn evaluate_line_risk(content: &str) -> Option<String> {
+    let lower = content.to_lowercase();
+    
+    // Pattern 1: Unmasked Token in URI
+    if content.contains("token=") && !content.contains("token=***") {
+        return Some("TOKEN_LEAK".to_string());
+    }
+    
+    // Pattern 2: Credentials in body/parameter
+    if (lower.contains("password=") || lower.contains("passwd=")) && !content.contains("=***") {
+        return Some("PASSWORD_EXPOSURE".to_string());
+    }
+
+    // Pattern 3: Private Key exposure
+    if content.contains("BEGIN PRIVATE KEY") || content.contains("ssh-rsa") {
+        return Some("PRIVATE_KEY_LEAK".to_string());
+    }
+
+    None
+}
+
+/// Prints a professional summary of the audit.
+fn display_audit_results(summary: &AuditSummary) {
+    println!("\n==================================================");
+    println!("📊 FORENSIC AUDIT SUMMARY");
+    println!("--------------------------------------------------");
+    println!("  Logs Processed   : {}", summary.processed_lines);
+    println!("  Token Leaks      : {}", summary.token_leaks);
+    println!("  Credentials Found: {}", summary.credential_leaks);
+    println!("  Key Exposures    : {}", summary.key_vulnerabilities);
+    println!("  Engine Latency   : {:?}", summary.execution_time.unwrap_or_default());
+    println!("==================================================");
+
+    let total_risks = summary.token_leaks + summary.credential_leaks + summary.key_vulnerabilities;
+    if total_risks > 0 {
+        println!("☣️  [SYSTEM_STATUS: COMPROMISED] Critical vulnerabilities detected.");
+    } else {
+        println!("✅ [SYSTEM_STATUS: CLEAN] No sensitive data patterns identified.");
+    }
+}
+
+/// Saves the audit report to a local markdown file.
+fn generate_forensic_report(log_path: &str, content: String) -> io::Result<()> {
+    let target = format!("{}.audit.md", log_path);
+    let mut file = fs::File::create(&target)?;
+    write!(file, "{}", content)?;
+    println!("📈 [GENERATE] Forensic report successfully saved to: {}", target);
+    Ok(())
 }
 
 #[cfg(test)]
@@ -141,18 +133,18 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_token_risk() {
-        assert!(analyze_security_risk("GET /?token=123").0);
-        assert!(!analyze_security_risk("GET /?token=***").0);
+    fn verify_token_detection() {
+        assert!(evaluate_line_risk("GET /?token=xyz").is_some());
+        assert!(evaluate_line_risk("GET /?token=***").is_none());
     }
 
     #[test]
-    fn test_password_risk() {
-        assert!(analyze_security_risk("POST /login?password=admin").0);
+    fn verify_credential_detection() {
+        assert!(evaluate_line_risk("POST /login?password=admin").is_some());
     }
 
     #[test]
-    fn test_key_risk() {
-        assert!(analyze_security_risk("-----BEGIN PRIVATE KEY-----").0);
+    fn verify_key_detection() {
+        assert!(evaluate_line_risk("ssh-rsa AAAAB3...").is_some());
     }
 }
