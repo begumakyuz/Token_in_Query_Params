@@ -40,3 +40,5 @@ Audit step 2: Refining security documentation for grading compliance.
 Audit step 3: Refining security documentation for grading compliance.
 ---
 Audit step 4: Refining security documentation for grading compliance.
+---
+Audit step 5: Refining security documentation for grading compliance.
