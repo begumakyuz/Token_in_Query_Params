@@ -3,7 +3,7 @@ import logging
 import hmac
 import time
 from typing import Any, Dict, List, Optional
-from flask import Flask, request, jsonify, Response, g
+from flask import Flask, request, jsonify, Response, g, render_template
 from core.security import (
     rate_limit, 
     apply_secure_headers, 
@@ -22,7 +22,7 @@ from core.security import (
 # License: Apache 2.0
 # =============================================================================
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates', static_folder='static')
 
 # --- [GLOBAL CONFIGURATION] ---
 # Secrets are managed via environment variables for ISO-27001 compliance.
@@ -40,6 +40,11 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - [%(name)s] - %(message)s'
 )
 logger = logging.getLogger("L14_API_SHIELD")
+
+@app.route('/')
+def index():
+    """Serves the Premium Security Dashboard UI."""
+    return render_template('index.html')
 
 @app.before_request
 def start_timer():

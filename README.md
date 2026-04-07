@@ -41,13 +41,13 @@
 ## 🎬 Demo & Practical Step-by-Step Proof
 Bu proje, sadece teorik bir çözüm değil, test ortamında **adım adım uygulanmış** bir güvenlik mimarisidir.
 
-### 🎥 Official Demo (Auto-Play)
-Sistemin canlı çalışmasını ve güvenlik katmanlarını aşağıdaki videodan izleyebilirsiniz:
+### 🎥 Official Project Demo (Comprehensive Walkthrough)
+Aşağıdaki videoda sistemin kurulumu, Premium Dashboard kullanımı, Dark/Light mode geçişleri, Mobil uyumluluk ve güvenlik denetimlerinin canlı akışı gösterilmektedir:
 
-https://github.com/begumakyuz/Token_in_Query_Params/raw/main/demo/demo.mp4
+https://github.com/begumakyuz/Token_in_Query_Params/raw/main/demo/project-demo.webm
 
 > [!TIP]
-> Eğer video yukarıda yüklenmiyorsa, **[🛡️ Buraya tıklayarak manuel olarak izleyebilirsiniz](demo/demo.mp4)**.
+> Eğer video yukarıda yüklenmiyorsa, **[🛡️ Buraya tıklayarak manuel olarak izleyebilirsiniz](demo/project-demo.webm)**.
 
 ### 📖 Practical Step-by-Step Audit Guide (Absolute Proof)
 Ekran görüntüleri ile desteklenmiş **Adım Adım Uygulama Rehberi**:

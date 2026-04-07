@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L14 Security Shield | Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+</head>
+<body class="dark-mode">
+    <div class="glass-container">
+        <!-- Navigation -->
+        <nav>
+            <div class="logo">
+                <span class="shield-icon">🛡️</span>
+                <h1>L14 <span class="gradient-text">Shield</span></h1>
+            </div>
+            <div class="nav-controls">
+                <button id="theme-toggle" class="btn-icon">🌓</button>
+            </div>
+        </nav>
+
+        <header>
+            <p class="subtitle">Begüm Akyüz | İstinye University Security Project</p>
+            <div class="status-badge" id="service-status">
+                <span class="pulse"></span> System Live
+            </div>
+        </header>
+
+        <main>
+            <!-- Control Panel -->
+            <section class="card control-panel">
+                <div class="card-header">
+                    <h2>🕹️ Practical Test Environment</h2>
+                    <span class="badge secondary">Simulated Audit</span>
+                </div>
+                
+                <div class="action-grid">
+                    <div class="action-card" onclick="testEndpoint('vulnerable')">
+                        <h3>1. Vulnerable Call</h3>
+                        <p>Pass token in URL query params.</p>
+                        <span class="tag warning">L14 Leak Case</span>
+                    </div>
+                    
+                    <div class="action-card" onclick="testEndpoint('secure-no-header')">
+                        <h3>2. Blocked Call</h3>
+                        <p>Secure route without headers.</p>
+                        <span class="tag danger">403 Forbidden</span>
+                    </div>
+                    
+                    <div class="action-card" onclick="testEndpoint('secure-with-header')">
+                        <h3>3. Secure Auth</h3>
+                        <p>Bearer Header Authorization.</p>
+                        <span class="tag success">MITIGATION</span>
+                    </div>
+
+                    <div class="action-card" onclick="testEndpoint('admin-metrics')">
+                        <h3>4. Admin Audit</h3>
+                        <p>Check Privileged Metrics.</p>
+                        <span class="tag info">HEALTH</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Console Output -->
+            <section class="card console-card">
+                <div class="card-header">
+                    <h2>🖥️ Forensic Output Terminal</h2>
+                    <button class="btn-clear" onclick="clearConsole()">Clear</button>
+                </div>
+                <div id="console" class="console-body">
+                    <div class="line info">Welcome to L14 Security Shield v2.1.0</div>
+                    <div class="line info">Ready for Practical Demonstration...</div>
+                </div>
+            </section>
+
+            <!-- Metadata & Details -->
+            <section class="metrics-grid">
+                <div class="card metric">
+                    <h4>Security Posture</h4>
+                    <div class="val">Hardened</div>
+                </div>
+                <div class="card metric">
+                    <h4>Log Scrubbing</h4>
+                    <div class="val text-success">Enabled</div>
+                </div>
+                <div class="card metric">
+                    <h4>Environment</h4>
+                    <div class="val">ISU-Production</div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>© 2026 Begüm Akyüz - Token in Query Params Project</p>
+            <div class="links">
+                <a href="https://github.com/begumakyuz/Token_in_Query_Params">GitHub Source</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- UI Interaction Script -->
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        const consoleEl = document.getElementById('console');
+
+        // Theme Toggle Logic
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            body.classList.toggle('dark-mode');
+            logToConsole(`Theme switched to ${body.classList.contains('light-mode') ? 'Light' : 'Dark'} mode`, 'info');
+        });
+
+        function logToConsole(message, type = 'info') {
+            const line = document.createElement('div');
+            line.className = `line ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            line.innerHTML = `<span class="ts">[${timestamp}]</span> ${message}`;
+            consoleEl.appendChild(line);
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        function clearConsole() {
+            consoleEl.innerHTML = '<div class="line info">Terminal cleared.</div>';
+        }
+
+        async function testEndpoint(type) {
+            logToConsole(`Initiating ${type} request...`, 'info');
+            
+            let url = '';
+            let options = {};
+
+            switch(type) {
+                case 'vulnerable':
+                    url = '/vulnerable/download?token=secure_api_key_placeholder';
+                    break;
+                case 'secure-no-header':
+                    url = '/secure/download';
+                    break;
+                case 'secure-with-header':
+                    url = '/secure/download';
+                    options = {
+                        headers: { 'Authorization': 'Bearer secure_api_key_placeholder' }
+                    };
+                    break;
+                case 'admin-metrics':
+                    url = '/admin/metrics';
+                    options = {
+                        headers: { 'X-Admin-Privilege': 'ENABLED' }
+                    };
+                    break;
+            }
+
+            try {
+                const response = await fetch(url, options);
+                const data = await response.json();
+                
+                const statusType = response.ok ? 'success' : 'danger';
+                logToConsole(`Response ${response.status}: ${JSON.stringify(data)}`, statusType);
+            } catch (err) {
+                logToConsole(`Network Error: ${err.message}`, 'danger');
+            }
+        }
+    </script>
+</body>
+</html>
