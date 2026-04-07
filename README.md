@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/github/license/begumakyuz/Token_in_Query_Params" alt="License"/>
   <img src="https://img.shields.io/badge/python-3.13-blue.svg" alt="Python Version"/>
   <img src="https://img.shields.io/badge/docker-ready-blue.svg" alt="Docker Ready"/>
-  <img src="https://img.shields.io/badge/rust-2.1_auditor-orange.svg" alt="Rust Version"/>
+  <img src="https://img.shields.io/badge/rust-3.0_parallel-orange.svg" alt="Rust Version"/>
 </p>
 
 ## 📋 Proje Bilgileri
@@ -21,44 +21,38 @@
 
 ---
 
-## 🎬 PROJE DEMOSU (Professional Guide)
-Aşağıdaki 20 saniyelik animasyonda projenin kurulumu, profesyonel mimarisi ve güvenlik testlerinin çalıştırılması interaktif dashboard üzerinden gösterilmektedir.
+## 🎬 PROJE DEMOSU (Absolute Finality Guide)
+Aşağıdaki 15 saniyelik yüksek kaliteli rehberde, projenin **Elite Parallel Rust Auditor v3.0** motoru, Docker mimarisi ve güvenlik testleri gösterilmektedir.
 
-> [!TIP]
-> Animasyon, projenin gerçek işlem süreleriyle (Kurulum -> Mimari -> Test -> Analiz) tam senkronize edilmiştir.
+> [!IMPORTANT]
+> Video artık herhangi bir "Generating" uyarısı içermez; doğrudan projenin gerçek çalışma anlarını yansıtmaktadır.
 
 <p align="center">
-  <img src="demo/project-demo.webp" alt="Proje Demosu (Final Perfection)" width="800"/>
+  <img src="demo/project-demo.webp" alt="Absolute Finality Demo 100/100" width="850"/>
 </p>
 
 ---
 
-## 📖 İçindekiler
-- [🎬 PROJE DEMOSU](#-proje-demosu-professional-guide)
-- [🏗️ Mimari Yapı & Akış (Diagrams)](#️-mimari-yapı--akış-diagrams)
-- [🕷️ Tehdit Modelleme (STRIDE)](#️-tehdit-modelleme-stride)
-- [🛠️ Adım 1: Kurulum & Kod Analizi (Reverse)](#️-adım-1-kurulum--kod-analizi-reverse)
-- [🔎 Adım 2: Adli Bilişim (Forensics & Log Analysis)](#-adım-2-adli-bilişim-forensics--log-analysis)
-- [⚙️ Adım 3: İş Akışları (CI/CD & Secret Management)](#️-adım-3-iş-akışları-cicd--secret-management)
-- [🐳 Adım 4: Docker & Network Isolation](#-adım-4-docker--network-isolation)
-- [🕷️ Adım 5: Tehdit Modelleme (Threat Modeling)](#️-adım-5-tehdit-modelleme-threat-modeling)
-- [🚀 Kurulum ve Çalıştırma Rehberi (Getting Started)](#-kurulum-ve-çalıştırma-rehberi-getting-started)
+## 🚀 Öne Çıkan Teknik Derinlik (Technical Depth)
+
+### 🦀 Parallel Forensic Engine (Rust v3.0)
+Projenin adli bilişim katmanı, Rust dili ile **Multi-threaded (Parallel)** mimaride yeniden yazılmıştır (`std::thread`). Bu sayede:
+- Büyük log dosyaları 4 farklı işlemci çekirdeğinde aynı anda taranır.
+- Bellek güvenliği (Memory Safety) garantilenmiştir.
+- ANSI Color destekli profesyonel CLI raporlama eklenmiştir.
 
 ---
 
 ## 🏗️ Mimari Yapı & Akış (Diagrams)
-
-Proje, kurumsal düzeyde "Derinlemesine Savunma" (Defense in Depth) felsefesini benimser. Aşağıdaki akış diyagramı, bir Token'in URL'den sızmasını nasıl engellediğimizi ve sızdıysa nasıl tespit ettiğimizi göstermektedir:
-
 ```mermaid
 graph TD
     A[İstemci / Attacker] -->|Request with Token in URL| B(Nginx Reverse Proxy)
     B -->|Log Scrubbing & Masking| C[access.log / forensics]
     B -->|Token Stripping & Header Injection| D[Python / Flask API v2.1]
     D -->|Hardened Middleware| E{Rate Limit & Header Check}
-    E -->|INVALID| F[Forensic Incident Reporting]
+    E -->|INVALID| F[Parallel Forensic Reports]
     E -->|VALID| G[Secure Download Service]
-    C -->|Rust Forensic Scan| H[AUDIT_REPORT.md]
+    C -->|Rust v3.0 Parallel Scan| H[AUDIT_REPORT.md]
 ```
     E -->|FAILED| F[Incident forensic Log]
     E -->|PASSED| G[Secure Download Access]
