@@ -43,8 +43,12 @@ Bu proje, sadece teorik bir çözüm değil, test ortamında **adım adım uygul
 
 ### 🎥 Official Project Demo (Comprehensive Walkthrough)
 Aşağıdaki videoda sistemin kurulumu, Premium Dashboard kullanımı, Dark/Light mode geçişleri, Mobil uyumluluk ve güvenlik denetimlerinin canlı akışı gösterilmektedir:
-[project-demo.zip](https://github.com/user-attachments/files/26537284/project-demo.zip)
 
+
+
+
+
+https://github.com/user-attachments/assets/738ba250-0916-48e1-a2dd-153e90897f21
 
 
 
