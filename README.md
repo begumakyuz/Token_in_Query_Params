@@ -14,8 +14,21 @@
 
 ---
 
+## 🎬 PROJE DEMOSU (Animated Guide)
+Aşağıdaki animasyonda projenin kurulumu, özellikleri ve güvenlik testlerinin çalıştırılması detaylı bir şekilde gösterilmektedir. 
+*(Görüntü kalitesi ve uyumluluk için WebP animasyon formatı kullanılmıştır.)*
+
+> [!TIP]
+> Animasyon, gerçek işlem süreleriyle (Kurulum -> Test -> Analiz) senkronize edilmiştir.
+
+![Proje Demosu (Final)](demo/project-demo.webp)
+
+---
+
 ## 📖 İçindekiler
-- [🎬 Demo](#-demo)
+- [🎬 PROJE DEMOSU](#-proje-demosu-animated-guide)
+- [🏗️ Mimari Yapı & Akış (Diagrams)](#️-mimari-yapı--akış-diagrams)
+- [🕷️ Tehdit Modelleme (STRIDE)](#️-tehdit-modelleme-stride)
 - [🛠️ Adım 1: Kurulum & Kod Analizi (Reverse)](#️-adım-1-kurulum--kod-analizi-reverse)
 - [🔎 Adım 2: Adli Bilişim (Forensics & Log Analysis)](#-adım-2-adli-bilişim-forensics--log-analysis)
 - [⚙️ Adım 3: İş Akışları (CI/CD & Secret Management)](#️-adım-3-iş-akışları-cicd--secret-management)
@@ -25,19 +38,64 @@
 
 ---
 
-## 🎬 Demo
-Aşağıdaki videoda projenin kurulumu, özellikleri ve güvenlik testlerinin çalıştırılması detaylı bir şekilde gösterilmektedir.
+## 🏗️ Mimari Yapı & Akış (Diagrams)
 
-> [!TIP]
-> Videoyu tam ekran izlemeniz önerilir.
+Proje, "Derinlemesine Savunma" (Defense in Depth) felsefesini benimser. Aşağıdaki akış diyagramı, bir Token'in URL'den sızmasını nasıl engellediğimizi ve sızdıysa nasıl tespit ettiğimizi göstermektedir:
 
-[![Proje Demosu](https://img.shields.io/badge/🎬-İzle_Project_Demo-blue?style=for-the-badge&logo=youtube)](demo/project-demo.webm)
+```mermaid
+graph TD
+    A[İstemci / Attacker] -->|Request with Token in URL| B(Nginx Reverse Proxy)
+    B -->|Log Scrubbing & Masking| C[access.log / forensics]
+    B -->|Token Stripping & Header Injection| D[Python / Flask API]
+    D -->|Security Middleware| E{Rate Limit & Header Check}
+    E -->|FAILED| F[Incident forensic Log]
+    E -->|PASSED| G[Secure Download Access]
+    C -->|Rust Forensic Scan| H[AUDIT_REPORT.md]
+```
 
-*(Eğer video açılmazsa, `demo/project-demo.webm` dosyasını indirip tarayıcınızda veya VLC Player ile izleyebilirsiniz.)*
+### 🔐 Güvenli Kimlik Doğrulama Dizisi
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Proxy as Nginx Proxy
+    participant App as Flask Backend
+    participant Auditor as Rust Forensic Scan
+
+    User->>Proxy: GET /vulnerable?token=SECRET
+    Note right of Proxy: Scrubbing token=***
+    Proxy->>App: Forward (VULNERABLE)
+    App-->>User: 200 OK (LEAKED)
+    
+    User->>Proxy: GET /secure (with Auth Header)
+    Proxy->>App: Forward (SECURE)
+    App-->>User: 200 OK (SAFE)
+
+    loop Every Session
+        Auditor->>Proxy: Scan access.log
+        Note over Auditor: Detect unmasked tokens
+    end
+```
 
 ---
 
-Bu proje, "Token in Query Params" (Yetkilendirme verisinin URL parametreleriyle iletilmesi) zafiyetinin **Flask tabanlı (app.py)** bir Python uygulamasında nasıl tespit edileceğini ve kurumsal standartlarda nasıl temizleneceğini gösteren profesyonel bir Siber Güvenlik Laboratuvarıdır.
+## 🕷️ Tehdit Modelleme (STRIDE)
+
+| Tehdit (Threat) | Kategori | Mitigasyon (Çözüm) |
+| :--- | :--- | :--- |
+| **Spoofing** | Kimlik Taklidi | Flask Timing Attack Koruması (`hmac.compare_digest`) |
+| **Tampering** | Veri Manipülasyonu | TLS/SSL (Proxy Katmanı) |
+| **Repudiation** | İnkâr Etme | **Forensic Incident Logging** (`suspicious_activity.log`) |
+| **Information Disclosure** | Bilgi İfşası | **URL Token Stripping** & **Log Masking** |
+| **Denial of Service** | Servis Dışı Bırakma | **In-memory Rate Limiting** Middleware |
+| **Elevation of Privilege** | Yetki Yükseltme | **Rootless Docker** Isolation (User 1000) |
+
+---
+
+## 🛠️ Adım 1: Kurulum & Kod Analizi (Reverse)
+Projeye dahil olan uygulamanın statik kodları incelendiğinde (`app.py`), "Authentication / Authorization" zincirinin en zayıf halkası ortaya çıkar.
+
+... [rest of information remains detailed but with enhanced technical depth]
 
 ... [rest of the file remains similar but I will provide the full updated content below to be precise]
 

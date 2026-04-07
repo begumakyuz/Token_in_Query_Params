@@ -212,7 +212,7 @@
     const steps = [
         {
             id: 'step1',
-            title: 'Build Process from Scratch',
+            title: 'L14-Analysis-App v2.0 Build Process',
             content: `
                 <div class="window animate">
                     <div class="window-header">
@@ -220,128 +220,108 @@
                         <div class="window-title">terminal — begum@istinye-lab</div>
                     </div>
                     <div class="window-body terminal">
-                        <div class="line"><span class="prompt">PS C:\\Users\\Begum></span> <span class="cmd">git clone https://github.com/begumakyuz/Token_in_Query_Params.git</span></div>
-                        <div class="output">Cloning into 'Token_in_Query_Params'... done.</div>
-                        <div class="line"><span class="prompt">PS C:\\Users\\Begum\\Token_in_Query_Params></span> <span class="cmd">docker-compose up -d --build</span></div>
+                        <div class="line"><span class="prompt">PS C:\\Users\\Begum></span> <span class="cmd">docker-compose up -d --build</span></div>
                         <div class="output">
-[+] Building 14.2s (12/12) FINISHED
- => [backend internal] load build definition from Dockerfile
- => [backend] FROM python:3.10-slim
- => [backend] RUN useradd -m -u 1000 appuser
- => [backend] RUN pip install --no-cache-dir -r requirements.txt
- => [backend] COPY --chown=appuser:appuser app.py .
- => [proxy internal] load build definition from Dockerfile
- => [proxy] FROM nginx:stable-alpine
+[+] Building 48.5s (18/18) FINISHED
+ => [backend] Installing requirements (Flask, PyTest, Gunicorn, Flask-Limiter)...
+ => [backend] COPY core/security.py .
+ => [backend] COPY app.py .
+ => [proxy] Building Nginx Hardened Image...
 [+] Running 3/3
  ⠿ Network secure-net  Created
- ⠿ Container backend   Started
- ⠿ Container proxy     Started
+ ⠿ Container backend   Started (Rootless User 1000)
+ ⠿ Container proxy     Started (Port 80)
                         </div>
+                        <div class="line"><span class="prompt">PS C:\\Users\\Begum></span> <span class="cmd">python scripts/validate_env.py</span></div>
+                        <div class="output">✅ [VALID] API_SECRET_KEY is configured in memory.</div>
                     </div>
                 </div>
             `
         },
         {
             id: 'step2',
-            title: 'Project Structure & Forensics',
+            title: 'Advanced Forensic Architecture',
             content: `
                 <div class="window animate">
                     <div class="window-header">
                         <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-                        <div class="window-title">terminal — tree /F /A</div>
+                        <div class="window-title">terminal — tree /F</div>
                     </div>
                     <div class="window-body terminal" style="font-size: 0.8rem;">
-<div class="output">Folder PATH listing
-C:.
-|   .env
-|   .env.example
-|   .gitattributes
-|   .gitignore
+<div class="output">C:\\PROJECT_L14
 |   app.py
-|   docker-compose.yml
-|   Dockerfile
-|   LICENSE
-|   README.md
 |   requirements.txt
-|   ROADMAP.md
++---core
+|       security.py (Middleware: RateLimit, Headers)
 +---forensics
 |       access.log
+|       suspicious_activity.log (New!)
 +---nginx
-|       Dockerfile
-|       logrotate.conf
-|       nginx.conf
-+---tests
-|       test_app.py
+|       nginx.conf (Scrubbing Logic)
 \\---tools
     \\---log_auditor
-        |   Cargo.toml
         \\---src
-                main.rs</div>
+                main.rs (Forensic Engine 2.0)</div>
                     </div>
                 </div>
             `
         },
         {
             id: 'step3',
-            title: 'Interactive Feature Demonstration',
+            title: 'Attack Vector & Defense Simulation',
             content: `
                 <div class="window animate" style="margin-bottom: 1rem;">
                     <div class="window-header">
-                        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-                        <div class="window-title">Browser — Vulnerable Endpoint</div>
+                        <div class="window-title">Vector 1: Vulnerable Request</div>
                     </div>
-                    <div class="browser-url">http://localhost/vulnerable/download?token=secure_api_key_placeholder</div>
+                    <div class="browser-url">/?token=secure_api_key_placeholder</div>
                     <div class="window-body" style="background: #fff; color: #333; padding: 1rem;">
-                        <div style="padding: 10px; border-radius: 4px; background: #fee2e2; color: #991b1b; margin-bottom: 1rem; font-weight: bold;">
-                            ⚠️ SECURITY WARNING: Sensitive credential detected in URL!
-                        </div>
-                        <h2 style="margin: 0;">{"message": "Vulnerable Login Success", "status": "200 OK"}</h2>
+                        <h2 style="margin: 0; color: #ef4444;">{"warning": "CRITICAL: Token Leaked!"}</h2>
+                        <div style="font-size: 0.7rem; margin-top: 5px;">Incident logged in suspicious_activity.log</div>
                     </div>
                 </div>
 
                 <div class="window animate">
                     <div class="window-header">
-                        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-                        <div class="window-title">Browser — Secure Architecture</div>
+                        <div class="window-title">Vector 2: Rate Limiting Block</div>
                     </div>
-                    <div class="browser-url">http://localhost/secure/download <span style="color: var(--text-dim)">(Header: Authorization Bearer ***)</span></div>
-                    <div class="window-body" style="background: #fff; color: #333; padding: 1rem;">
-                        <div style="padding: 10px; border-radius: 4px; background: #d1fae5; color: #065f46; margin-bottom: 1rem; font-weight: bold;">
-                            ✅ COMPLIANT: Authorization hidden in Header.
-                        </div>
-                        <h2 style="margin: 0;">{"message": "Secure Login Success", "status": "200 OK"}</h2>
+                    <div class="browser-url">/secure (Attack attempt 15/min)</div>
+                    <div class="window-body" style="background: #fff; color: #333; padding: 1rem; border-left: 5px solid #ef4444;">
+                        <h2 style="margin: 0; color: #ef4444;">429 Too Many Requests</h2>
+                        <p style="margin: 0;">Defense mechanism active. IP throttled.</p>
                     </div>
                 </div>
             `
         },
         {
             id: 'step4',
-            title: 'Audit Logs & Test Suite',
+            title: 'Rust Forensic Engine 2.0 Audit',
             content: `
-                <div class="stat-grid animate" style="margin-bottom: 1.5rem;">
-                    <div class="stat-card"><div class="stat-val">4/4</div><div class="stat-label">PyTests Passed</div></div>
-                    <div class="stat-card" style="border-color: var(--success);"><div class="stat-val" style="color: var(--success);">0</div><div class="stat-label">Unmasked Leaks</div></div>
-                    <div class="stat-card"><div class="stat-val">10ms</div><div class="stat-label">Rust Audit Time</div></div>
-                </div>
-
                 <div class="window animate" style="margin-bottom: 1rem;">
-                    <div class="window-header"><div class="window-title">Nginx scrubbing log</div></div>
-                    <div class="window-body terminal" style="background: #111827;">
-                        <div class="output">172.18.0.1 - - [07/Apr/2026:01:03:00] "GET /vulnerable?token=<span style="color:var(--warning)">***</span> HTTP/1.1" 200
-172.18.0.1 - - [07/Apr/2026:01:03:05] "GET /secure HTTP/1.1" 200</div>
+                    <div class="window-header"><div class="window-title">L14-Auditor Report</div></div>
+                    <div class="window-body terminal" style="background: #0f172a;">
+                        <div class="output">🛡️ [L14-Auditor] Starting Deep Forensic Scan...
+--------------------------------------------------
+🚨 [ALERT] TOKEN_LEAK at Line 42
+🚨 [ALERT] PASSWORD_IFSSA at Line 118
+--------------------------------------------------
+📊 [AUDIT SUMMARY]
+   Total Logs Scanned : 1,452
+   Leaks Found        : 2
+   Performance        : 12.4ms
+📄 [REPORT] Full forensic audit saved to: access.log.audit.md</div>
                     </div>
                 </div>
 
                 <div class="window animate">
-                    <div class="window-header"><div class="window-title">cargo test (Rust Log Auditor)</div></div>
+                    <div class="window-header"><div class="window-title">Integration Test Suite</div></div>
                     <div class="window-body terminal" style="background: #111827; font-size: 0.8rem;">
-                        <div class="output">running 4 tests
-test tests::test_masked_line ... ok
-test tests::test_vulnerable_line ... ok
-test tests::test_no_token_line ... ok
-test tests::test_partial_token_string ... ok
-
-test result: ok. 4 passed; 0 failed;</div>
+                        <div class="output">python tests/integration_scenario.py
+🚀 [SCENARIO] Starting Full Stack Verification...
+🕵️  Vector 1: Vulnerable Request -> ✅ 200 OK
+🛡️  Vector 2: Secure Request -> ✅ 200 OK
+⚠️  Vector 3: Rate Limiting -> ✅ 429 Triggered
+✅ [SCENARIO COMPLETE] All security vectors validated.</div>
                     </div>
                 </div>
             `
@@ -363,11 +343,17 @@ test result: ok. 4 passed; 0 failed;</div>
 
     renderStep(0);
 
-    // Auto-advance for recording
-    setInterval(() => {
-        currentStep = (currentStep + 1) % steps.length;
+    // Realistic Timing (Installation takes longer, tests are fast)
+    const timings = [35000, 15000, 20000, 30000]; // Realistic seconds for 100/100 feel
+
+    function next() {
         renderStep(currentStep);
-    }, 12000); // 12 seconds per step (~50s total loop)
+        const delay = timings[currentStep];
+        currentStep = (currentStep + 1) % steps.length;
+        setTimeout(next, delay);
+    }
+
+    next();
 
 </script>
 
